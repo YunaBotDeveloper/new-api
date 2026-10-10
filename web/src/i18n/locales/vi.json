@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "Thiếu API key hoặc API key không hợp lệ",
     "The key cannot use this model or group, or your balance is exhausted": "Key không được phép dùng mô hình hoặc nhóm này, hoặc số dư đã hết",
     "Too many requests. Slow down and retry later": "Quá nhiều request. Hãy giảm tốc độ và thử lại sau",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream tạm thời không khả dụng. Thử lại với thời gian chờ tăng dần"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream tạm thời không khả dụng. Thử lại với thời gian chờ tăng dần",
+    "Email Templates": "Mẫu email",
+    "Failed to load email templates": "Không tải được mẫu email",
+    "Subject must be a single line": "Tiêu đề phải nằm trên một dòng",
+    "The body must contain {{placeholder}}": "Nội dung phải chứa {{placeholder}}",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "Email được gửi theo ngôn ngữ của người nhận: ngôn ngữ đã lưu trên trang, nếu không có thì theo ngôn ngữ trình duyệt. Các ngôn ngữ khác dùng tiếng Anh.",
+    "Language": "Ngôn ngữ",
+    "Restore default": "Khôi phục mặc định",
+    "Subject": "Tiêu đề",
+    "Body (HTML)": "Nội dung (HTML)",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "Biến được tô sáng là bắt buộc. Giá trị được chèn an toàn và không thể làm thay đổi HTML.",
+    "Save email templates": "Lưu mẫu email",
+    "Sign-up verification": "Xác minh khi đăng ký",
+    "Password reset": "Đặt lại mật khẩu",
+    "Link email address": "Liên kết địa chỉ email",
+    "Confirm email change": "Xác nhận đổi email",
+    "Security notification": "Thông báo bảo mật"
   }
 }

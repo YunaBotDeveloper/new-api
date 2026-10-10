@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "API キーがない、または無効です",
     "The key cannot use this model or group, or your balance is exhausted": "このキーではこのモデル・グループを使用できないか、残高が不足しています",
     "Too many requests. Slow down and retry later": "リクエストが多すぎます。頻度を下げて後で再試行してください",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "アップストリームが一時的に利用できません。指数バックオフで再試行してください"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "アップストリームが一時的に利用できません。指数バックオフで再試行してください",
+    "Email Templates": "メールテンプレート",
+    "Failed to load email templates": "メールテンプレートを読み込めませんでした",
+    "Subject must be a single line": "件名は 1 行で入力してください",
+    "The body must contain {{placeholder}}": "本文には {{placeholder}} を含める必要があります",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "メールは受信者の言語で送信されます。サイトで保存された言語を優先し、なければブラウザーの言語を使用します。その他の言語は英語になります。",
+    "Language": "言語",
+    "Restore default": "デフォルトに戻す",
+    "Subject": "件名",
+    "Body (HTML)": "本文（HTML）",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "強調表示された変数は必須です。値は安全に挿入され、HTML を変更しません。",
+    "Save email templates": "メールテンプレートを保存",
+    "Sign-up verification": "登録時の確認",
+    "Password reset": "パスワードのリセット",
+    "Link email address": "メールアドレスの連携",
+    "Confirm email change": "メールアドレス変更の確認",
+    "Security notification": "セキュリティ通知"
   }
 }

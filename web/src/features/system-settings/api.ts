@@ -28,6 +28,7 @@ import type {
   SystemTaskResponse,
   UpdateOptionRequest,
   UpdateOptionResponse,
+  EmailTemplateDefaultsResponse,
   UpdatePasskeyDomainsRequest,
   UpdatePasskeyDomainsResponse,
   UpstreamChannelsResponse,
@@ -36,6 +37,13 @@ import type {
 
 export async function getSystemOptions() {
   const res = await api.get<SystemOptionsResponse>('/api/option/')
+  return res.data
+}
+
+export async function getEmailTemplateDefaults() {
+  const res = await api.get<EmailTemplateDefaultsResponse>(
+    '/api/option/email_templates'
+  )
   return res.data
 }
 

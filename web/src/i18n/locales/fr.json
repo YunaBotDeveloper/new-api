@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "Clé API manquante ou invalide",
     "The key cannot use this model or group, or your balance is exhausted": "La clé ne peut pas utiliser ce modèle ou ce groupe, ou votre solde est épuisé",
     "Too many requests. Slow down and retry later": "Trop de requêtes. Ralentissez et réessayez plus tard",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "Service amont temporairement indisponible. Réessayez avec un backoff exponentiel"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "Service amont temporairement indisponible. Réessayez avec un backoff exponentiel",
+    "Email Templates": "Modèles d'e-mail",
+    "Failed to load email templates": "Impossible de charger les modèles d'e-mail",
+    "Subject must be a single line": "L'objet doit tenir sur une seule ligne",
+    "The body must contain {{placeholder}}": "Le corps doit contenir {{placeholder}}",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "Les e-mails sont envoyés dans la langue du destinataire : sa langue enregistrée sur le site, sinon celle de son navigateur. Les autres langues utilisent l'anglais.",
+    "Language": "Langue",
+    "Restore default": "Restaurer la valeur par défaut",
+    "Subject": "Objet",
+    "Body (HTML)": "Corps (HTML)",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "La variable mise en évidence est obligatoire. Les valeurs sont insérées de manière sûre et ne peuvent pas modifier le HTML.",
+    "Save email templates": "Enregistrer les modèles d'e-mail",
+    "Sign-up verification": "Vérification à l'inscription",
+    "Password reset": "Réinitialisation du mot de passe",
+    "Link email address": "Associer une adresse e-mail",
+    "Confirm email change": "Confirmer le changement d'e-mail",
+    "Security notification": "Notification de sécurité"
   }
 }

@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "API-ключ отсутствует или недействителен",
     "The key cannot use this model or group, or your balance is exhausted": "Ключу недоступна эта модель или группа, либо баланс исчерпан",
     "Too many requests. Slow down and retry later": "Слишком много запросов. Снизьте частоту и повторите позже",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream временно недоступен. Повторите с экспоненциальной задержкой"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream временно недоступен. Повторите с экспоненциальной задержкой",
+    "Email Templates": "Шаблоны писем",
+    "Failed to load email templates": "Не удалось загрузить шаблоны писем",
+    "Subject must be a single line": "Тема должна быть в одну строку",
+    "The body must contain {{placeholder}}": "Текст письма должен содержать {{placeholder}}",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "Письма отправляются на языке получателя: сохранённом на сайте, иначе — на языке браузера. Для остальных языков используется английский.",
+    "Language": "Язык",
+    "Restore default": "Восстановить по умолчанию",
+    "Subject": "Тема",
+    "Body (HTML)": "Текст (HTML)",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "Выделенная переменная обязательна. Значения вставляются безопасно и не могут изменить HTML.",
+    "Save email templates": "Сохранить шаблоны писем",
+    "Sign-up verification": "Подтверждение регистрации",
+    "Password reset": "Сброс пароля",
+    "Link email address": "Привязка адреса почты",
+    "Confirm email change": "Подтверждение смены почты",
+    "Security notification": "Уведомление о безопасности"
   }
 }

@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "缺少 API 密钥或密钥无效",
     "The key cannot use this model or group, or your balance is exhausted": "该密钥无权使用此模型或分组，或余额已用尽",
     "Too many requests. Slow down and retry later": "请求过多，请降低频率后重试",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "上游暂时不可用，请使用指数退避重试"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "上游暂时不可用，请使用指数退避重试",
+    "Email Templates": "邮件模板",
+    "Failed to load email templates": "加载邮件模板失败",
+    "Subject must be a single line": "主题必须为单行",
+    "The body must contain {{placeholder}}": "正文必须包含 {{placeholder}}",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "邮件将以收件人的语言发送：优先使用其在站点保存的语言，否则使用浏览器语言。其他语言使用英文。",
+    "Language": "语言",
+    "Restore default": "恢复默认",
+    "Subject": "主题",
+    "Body (HTML)": "正文（HTML）",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "高亮的变量为必填项。变量值会被安全插入，不会改变 HTML 结构。",
+    "Save email templates": "保存邮件模板",
+    "Sign-up verification": "注册验证",
+    "Password reset": "密码重置",
+    "Link email address": "绑定邮箱地址",
+    "Confirm email change": "确认更换邮箱",
+    "Security notification": "安全通知"
   }
 }

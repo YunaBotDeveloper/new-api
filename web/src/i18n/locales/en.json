@@ -6903,6 +6903,22 @@
     "Missing or invalid API key": "Missing or invalid API key",
     "The key cannot use this model or group, or your balance is exhausted": "The key cannot use this model or group, or your balance is exhausted",
     "Too many requests. Slow down and retry later": "Too many requests. Slow down and retry later",
-    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream temporarily unavailable. Retry with exponential backoff"
+    "Upstream temporarily unavailable. Retry with exponential backoff": "Upstream temporarily unavailable. Retry with exponential backoff",
+    "Email Templates": "Email Templates",
+    "Failed to load email templates": "Failed to load email templates",
+    "Subject must be a single line": "Subject must be a single line",
+    "The body must contain {{placeholder}}": "The body must contain {{placeholder}}",
+    "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.": "Emails are sent in the recipient's language: their saved site language, otherwise their browser language. Other languages use English.",
+    "Language": "Language",
+    "Restore default": "Restore default",
+    "Subject": "Subject",
+    "Body (HTML)": "Body (HTML)",
+    "The highlighted variable is required. Values are inserted safely and cannot change the HTML.": "The highlighted variable is required. Values are inserted safely and cannot change the HTML.",
+    "Save email templates": "Save email templates",
+    "Sign-up verification": "Sign-up verification",
+    "Password reset": "Password reset",
+    "Link email address": "Link email address",
+    "Confirm email change": "Confirm email change",
+    "Security notification": "Security notification"
   }
 }

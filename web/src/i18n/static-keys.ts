@@ -911,4 +911,12 @@ export const STATIC_I18N_KEYS = [
   'The key cannot use this model or group, or your balance is exhausted',
   'Too many requests. Slow down and retry later',
   'Upstream temporarily unavailable. Retry with exponential backoff',
+  // Email template settings (system-settings/integrations/email-templates.ts).
+  'Email Templates',
+  'Save email templates',
+  'Sign-up verification',
+  'Password reset',
+  'Link email address',
+  'Confirm email change',
+  'Security notification',
 ] as const

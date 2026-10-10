@@ -197,13 +197,21 @@ func ParseAcceptLanguage(header string) string {
 	return normalizeLang(firstLang)
 }
 
+// NormalizeLang maps a language code (BCP 47 tag or a frontend code such as
+// "zhTW") to a supported language, falling back to DefaultLang.
+func NormalizeLang(lang string) string {
+	return normalizeLang(lang)
+}
+
 // normalizeLang normalizes language code to supported format
 func normalizeLang(lang string) string {
 	lang = strings.ToLower(strings.TrimSpace(lang))
 
 	// Handle common variations
 	switch {
-	case strings.HasPrefix(lang, "zh-tw"):
+	// "zhtw" is the code the web frontend saves in user settings.
+	case strings.HasPrefix(lang, "zh-tw"), strings.HasPrefix(lang, "zhtw"),
+		strings.HasPrefix(lang, "zh-hant"), strings.HasPrefix(lang, "zh-hk"):
 		return LangZhTW
 	case strings.HasPrefix(lang, "zh"):
 		return LangZhCN

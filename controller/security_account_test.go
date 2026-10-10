@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/i18n"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/oauth"
 	"github.com/QuantumNous/new-api/service"
@@ -646,7 +647,7 @@ func TestSecurityAccountEmailResendAndAttemptLimit(t *testing.T) {
 	_, identity := setupSecurityEnrollmentTest(t)
 	mailbox := newSecurityMailbox(t)
 	flow := startSecurityEmailBinding(t, identity, "new@example.com", service.VerificationMethodPassword)
-	_, err := service.ResendAccountEmailBinding(identity, flow.FlowToken)
+	_, err := service.ResendAccountEmailBinding(identity, flow.FlowToken, i18n.DefaultLang)
 	assert.ErrorIs(t, err, model.ErrEmailBindingResendWait)
 	_, err = service.FinishEmailBinding(identity, flow.FlowToken, "invalid", "")
 	assert.ErrorIs(t, err, model.ErrEmailBindingCodeInvalid)
@@ -657,7 +658,7 @@ func TestSecurityAccountEmailResendAndAttemptLimit(t *testing.T) {
 	payload, err := common.Marshal(state)
 	require.NoError(t, err)
 	require.NoError(t, model.DB.Model(stored).Update("payload", string(payload)).Error)
-	replacement, err := service.ResendAccountEmailBinding(identity, flow.FlowToken)
+	replacement, err := service.ResendAccountEmailBinding(identity, flow.FlowToken, i18n.DefaultLang)
 	require.NoError(t, err)
 	assert.Equal(t, flow.ExpiresAt, replacement.ExpiresAt)
 	_, state, err = model.GetEmailBinding(identity, flow.FlowToken)

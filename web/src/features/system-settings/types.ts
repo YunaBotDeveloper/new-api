@@ -29,6 +29,16 @@ export type SystemOptionsResponse = {
   data: SystemOption[]
 }
 
+export type EmailTemplateDefaultsResponse = {
+  success: boolean
+  message?: string
+  data?: {
+    languages: string[]
+    defaults: Record<string, Record<string, { subject: string; body: string }>>
+    placeholders: Record<string, string[]>
+  }
+}
+
 export type UpdateOptionRequest = {
   key: string
   value: string | boolean | number
@@ -371,6 +381,11 @@ export type OperationsSettings = {
   SMTPStartTLSEnabled: boolean
   SMTPInsecureSkipVerify: boolean
   SMTPForceAuthLogin: boolean
+  'email_template.verification': string
+  'email_template.password_reset': string
+  'email_template.email_binding': string
+  'email_template.email_change': string
+  'email_template.security_notice': string
   WorkerUrl: string
   WorkerValidKey: string
   WorkerAllowHttpImageRequestEnabled: boolean

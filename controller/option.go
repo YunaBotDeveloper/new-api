@@ -81,6 +81,20 @@ func buildCompletionRatioMetaValue(optionValues map[string]string) string {
 	return string(jsonBytes)
 }
 
+// GetEmailTemplateDefaults returns the built-in email templates, their
+// languages and placeholders so the settings UI can show and restore them.
+func GetEmailTemplateDefaults(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"data": gin.H{
+			"languages":    system_setting.EmailTemplateLanguages(),
+			"defaults":     system_setting.DefaultEmailTemplates,
+			"placeholders": system_setting.EmailTemplatePlaceholders,
+		},
+	})
+}
+
 func GetOptions(c *gin.Context) {
 	var options []*model.Option
 	optionValues := make(map[string]string)
@@ -214,6 +228,12 @@ func UpdateOption(c *gin.Context) {
 	}
 	if option.Key == "TaskPublicAddress" && option.Value.(string) != "" {
 		if err := service.ValidateTaskArtifactBaseURL(option.Value.(string)); err != nil {
+			common.ApiErrorMsg(c, err.Error())
+			return
+		}
+	}
+	if kind, ok := strings.CutPrefix(option.Key, "email_template."); ok {
+		if err := system_setting.ValidateEmailTemplateOption(kind, option.Value.(string)); err != nil {
 			common.ApiErrorMsg(c, err.Error())
 			return
 		}
