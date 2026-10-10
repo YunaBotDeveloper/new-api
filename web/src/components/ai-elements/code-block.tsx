@@ -187,6 +187,14 @@ const codeMirrorTheme = EditorView.theme({
   },
 })
 
+// The base content padding has no left inset because the line-number gutter
+// supplies it; without the gutter the code would touch the block border.
+// An inline style is used because CodeMirror may inject a second theme before
+// the base theme, whose `padding` shorthand would then win.
+const codeMirrorNoGutterInset = EditorView.contentAttributes.of({
+  style: 'padding-left: 1rem',
+})
+
 const codeMirrorHighlightStyle = syntaxHighlighting(
   HighlightStyle.define([
     { tag: highlightTags.heading, color: '#e06c75', fontWeight: '600' },
@@ -308,6 +316,8 @@ function getCodeMirrorExtensions(options: {
 
   if (options.showLineNumbers) {
     extensions.unshift(lineNumbers())
+  } else {
+    extensions.push(codeMirrorNoGutterInset)
   }
 
   return extensions

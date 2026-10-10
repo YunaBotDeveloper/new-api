@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, test } from 'vitest'
 
-import { CodeBlockEditor } from '../code-block'
+import { CodeBlock, CodeBlockEditor } from '../code-block'
 
 afterEach(() => {
   cleanup()
@@ -57,6 +57,17 @@ describe('CodeBlockEditor', () => {
     // CodeMirror already offsets each gutter line by the content padding.
     // Extra vertical padding here shifts every number below its source line.
     expect(gutters).toHaveStyle({ paddingTop: '0px', paddingBottom: '0px' })
+  })
+
+  test('insets code from the left border when line numbers are hidden', () => {
+    render(<CodeBlock code='curl https://example.com' language='bash' />)
+
+    const content = document.querySelector('.cm-content')
+
+    // The gutter normally supplies the left inset; without it the code would
+    // touch the block border.
+    expect(document.querySelector('.cm-gutters')).toBeNull()
+    expect(content).toHaveStyle({ paddingLeft: '1rem' })
   })
 
   test('keeps the same editor instance when value and onKeyDown change on rerender', () => {

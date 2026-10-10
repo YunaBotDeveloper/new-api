@@ -83,14 +83,18 @@ export function DocsAppGuides(props: DocsAppGuidesProps) {
       </TabsList>
 
       <TabsContent value='codex' className='flex flex-col gap-3'>
+        {/* The path lives in the text: the code block toolbar uppercases its
+            title, and file paths are case-sensitive. */}
         <p className='text-muted-foreground text-sm'>
-          {t('Add a custom provider to the Codex config file:')}
+          {t('Add a custom provider to the Codex config file:')}{' '}
+          <code className='bg-muted text-foreground rounded px-1 py-0.5 font-mono'>
+            ~/.codex/config.toml
+          </code>
         </p>
         <CodeBlock
           code={codexConfig}
           language='toml'
           filename='config.toml'
-          title='~/.codex/config.toml'
           showToolbar
         >
           <CodeBlockCopyButton />
