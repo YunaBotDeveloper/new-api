@@ -124,7 +124,7 @@ func RequestGPMPayPay(c *gin.Context) {
 	bankBin := strings.TrimSpace(setting.GPMPayBankBin)
 	accountNumber := strings.TrimSpace(setting.GPMPayAccountNumber)
 	accountName := strings.TrimSpace(setting.GPMPayAccountName)
-	qrUrl := fmt.Sprintf("https://img.vietqr.io/image/%s-%s-compact2.png?amount=%d&addInfo=%s&accountName=%s",
+	qrUrl := fmt.Sprintf("https://img.vietqr.io/image/%s-%s-compact.png?amount=%d&addInfo=%s&accountName=%s",
 		url.PathEscape(bankBin), url.PathEscape(accountNumber), amountVND, url.QueryEscape(tradeNo), url.QueryEscape(accountName))
 	logger.LogInfo(c.Request.Context(), common.LogText("GPMPay top-up order created user_id=%d trade_no=%s amount=%d amount_vnd=%d", id, tradeNo, req.Amount, amountVND))
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": gin.H{
