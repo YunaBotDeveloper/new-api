@@ -49,11 +49,7 @@ import { formatCurrencyFromUSD } from '@/lib/currency'
 import { formatNumber } from '@/lib/format'
 
 import { useBillingHistory } from '../../hooks/use-billing-history'
-import {
-  getStatusConfig,
-  getPaymentMethodName,
-  formatTimestamp,
-} from '../../lib/billing'
+import { getStatusConfig, formatTimestamp } from '../../lib/billing'
 
 interface BillingHistoryDialogProps {
   open: boolean
@@ -240,7 +236,7 @@ export function BillingHistoryDialog({
                             {t('Payment Method')}
                           </Label>
                           <div className='text-sm font-medium'>
-                            {getPaymentMethodName(record.payment_method, t)}
+                            {record.payment_method}
                           </div>
                         </div>
                         <div className='space-y-1'>

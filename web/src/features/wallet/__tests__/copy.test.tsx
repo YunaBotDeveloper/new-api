@@ -26,8 +26,6 @@ import en from '@/i18n/locales/en.json'
 import zh from '@/i18n/locales/zh.json'
 import { api } from '@/lib/api'
 
-import { RechargeFormCard } from '../components/recharge-form-card'
-
 const i18n = createInstance()
 
 beforeEach(async () => {
@@ -52,7 +50,7 @@ it('translates billing history statuses and updates them when the language chang
           amount: 10,
           money: 10,
           trade_no: `order-${id}`,
-          payment_method: 'stripe',
+          payment_method: 'bank_transfer',
           create_time: 1,
         })),
       },
@@ -72,56 +70,3 @@ it('translates billing history statuses and updates them when the language chang
     expect(screen.getByText(label)).toBeVisible()
   }
 })
-
-it.each([
-  { priceRatio: 7.3, paid: '584', saved: '146', full: '146' },
-  { priceRatio: 0.000123, paid: '0.0098', saved: '0.0025', full: '0.0025' },
-])(
-  'translates recharge presets and minimum amount without changing precision at price ratio $priceRatio',
-  async ({ priceRatio, paid, saved, full }) => {
-    render(
-      <I18nextProvider i18n={i18n}>
-        <RechargeFormCard
-          topupInfo={{
-            enable_online_topup: true,
-            enable_stripe_topup: false,
-            pay_methods: [],
-            min_topup: 1,
-            stripe_min_topup: 1,
-            amount_options: [100, 20],
-            discount: {},
-          }}
-          presetAmounts={[{ value: 100, discount: 0.8 }, { value: 20 }]}
-          selectedPreset={null}
-          topupAmount={1}
-          paymentAmount={priceRatio}
-          priceRatio={priceRatio}
-          calculating={false}
-          paymentLoading={null}
-          redemptionCode=''
-          redeeming={false}
-          onSelectPreset={vi.fn()}
-          onTopupAmountChange={vi.fn()}
-          onPaymentMethodSelect={vi.fn()}
-          onRedemptionCodeChange={vi.fn()}
-          onRedeem={vi.fn()}
-        />
-      </I18nextProvider>
-    )
-    expect(screen.getByRole('button', { name: /^100 / })).toHaveTextContent(
-      `优惠 20%支付 ${paid} • 节省 ${saved}`
-    )
-    expect(screen.getByRole('button', { name: /^20 / })).toHaveTextContent(
-      `支付 ${full}`
-    )
-    expect(screen.getByPlaceholderText('最低 1')).toBeVisible()
-    await act(() => i18n.changeLanguage('en'))
-    expect(screen.getByRole('button', { name: /^100 / })).toHaveTextContent(
-      `20% OFFPay ${paid} • Save ${saved}`
-    )
-    expect(screen.getByRole('button', { name: /^20 / })).toHaveTextContent(
-      `Pay ${full}`
-    )
-    expect(screen.getByPlaceholderText('Minimum 1')).toBeVisible()
-  }
-)

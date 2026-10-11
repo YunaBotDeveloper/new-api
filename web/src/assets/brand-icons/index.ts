@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-export { IconAlipay } from './icon-alipay'
 export { IconDiscord } from './icon-discord'
 export { IconDocker } from './icon-docker'
 export { IconFacebook } from './icon-facebook'
@@ -29,7 +28,6 @@ export { IconMedium } from './icon-medium'
 export { IconNotion } from './icon-notion'
 export { IconSkype } from './icon-skype'
 export { IconSlack } from './icon-slack'
-export { IconStripe } from './icon-stripe'
 export { IconTelegram } from './icon-telegram'
 export { IconTrello } from './icon-trello'
 export { IconWeChat } from './icon-wechat'

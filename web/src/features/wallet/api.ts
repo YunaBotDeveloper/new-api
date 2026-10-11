@@ -20,25 +20,15 @@ import { api } from '@/lib/api'
 
 import type {
   RedemptionRequest,
-  PaymentRequest,
-  AmountRequest,
   AffiliateTransferRequest,
   ApiResponse,
   TopupInfoResponse,
   RedemptionResponse,
-  AmountResponse,
-  PaymentResponse,
-  StripePaymentResponse,
   AffiliateCodeResponse,
   AffiliateTransferResponse,
   BillingHistoryResponse,
   CompleteOrderRequest,
-  CreemPaymentRequest,
-  CreemPaymentResponse,
-  WaffoPaymentRequest,
-  WaffoPaymentResponse,
-  WaffoPancakePaymentRequest,
-  WaffoPancakePaymentResponse,
+  GpmpayOrder,
 } from './types'
 
 // ============================================================================
@@ -71,111 +61,25 @@ export async function redeemTopupCode(
 }
 
 /**
- * Calculate payment amount for regular payment
+ * Calculate the money to pay for a top-up amount. Errors come back as
+ * {"message": "error", "data": text}, so business errors are not thrown.
  */
-export async function calculateAmount(
-  request: AmountRequest
-): Promise<AmountResponse> {
-  const res = await api.post('/api/user/amount', request, {
+export async function calculateTopupAmount(
+  amount: number
+): Promise<ApiResponse<string>> {
+  const res = await api.post('/api/user/amount', { amount }, {
     skipBusinessError: true,
   } as Record<string, unknown>)
   return res.data
 }
 
 /**
- * Calculate payment amount for Stripe payment
+ * Create a GPMPay order and get its VietQR transfer details
  */
-export async function calculateStripeAmount(
-  request: AmountRequest
-): Promise<AmountResponse> {
-  const res = await api.post('/api/user/stripe/amount', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Calculate payment amount for Waffo payment
- */
-export async function calculateWaffoAmount(
-  request: AmountRequest
-): Promise<AmountResponse> {
-  const res = await api.post('/api/user/waffo/amount', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Request regular payment
- */
-export async function requestPayment(
-  request: PaymentRequest
-): Promise<PaymentResponse> {
-  const res = await api.post('/api/user/pay', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return {
-    ...res.data,
-    url: res.data.url || (res as unknown as { url?: string }).url,
-  }
-}
-
-/**
- * Request Stripe payment
- */
-export async function requestStripePayment(
-  request: PaymentRequest
-): Promise<StripePaymentResponse> {
-  const res = await api.post('/api/user/stripe/pay', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Request Creem payment
- */
-export async function requestCreemPayment(
-  request: CreemPaymentRequest
-): Promise<CreemPaymentResponse> {
-  const res = await api.post('/api/user/creem/pay', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Request Waffo payment
- */
-export async function requestWaffoPayment(
-  request: WaffoPaymentRequest
-): Promise<WaffoPaymentResponse> {
-  const res = await api.post('/api/user/waffo/pay', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Calculate payment amount for Waffo Pancake payment
- */
-export async function calculateWaffoPancakeAmount(
-  request: AmountRequest
-): Promise<AmountResponse> {
-  const res = await api.post('/api/user/waffo-pancake/amount', request, {
-    skipBusinessError: true,
-  } as Record<string, unknown>)
-  return res.data
-}
-
-/**
- * Request Waffo Pancake payment
- */
-export async function requestWaffoPancakePayment(
-  request: WaffoPancakePaymentRequest
-): Promise<WaffoPancakePaymentResponse> {
-  const res = await api.post('/api/user/waffo-pancake/pay', request, {
+export async function requestGpmpayPayment(
+  amount: number
+): Promise<ApiResponse<GpmpayOrder | string>> {
+  const res = await api.post('/api/user/gpmpay/pay', { amount }, {
     skipBusinessError: true,
   } as Record<string, unknown>)
   return res.data

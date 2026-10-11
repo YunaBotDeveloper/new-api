@@ -88,21 +88,6 @@ func getUserQuotaForPaymentGuardTest(t *testing.T, userID int) int {
 	return user.Quota
 }
 
-func TestRechargeWaffoPancake_RejectsMismatchedPaymentMethod(t *testing.T) {
-	truncateTables(t)
-
-	insertUserForPaymentGuardTest(t, 101, 0)
-	insertTopUpForPaymentGuardTest(t, "waffo-pancake-guard", 101, PaymentProviderStripe)
-
-	err := RechargeWaffoPancake("waffo-pancake-guard")
-	require.Error(t, err)
-
-	topUp := GetTopUpByTradeNo("waffo-pancake-guard")
-	require.NotNil(t, topUp)
-	assert.Equal(t, common.TopUpStatusPending, topUp.Status)
-	assert.Equal(t, 0, getUserQuotaForPaymentGuardTest(t, 101))
-}
-
 func TestUpdatePendingTopUpStatus_RejectsMismatchedPaymentProvider(t *testing.T) {
 	testCases := []struct {
 		name                    string
@@ -112,17 +97,17 @@ func TestUpdatePendingTopUpStatus_RejectsMismatchedPaymentProvider(t *testing.T)
 		targetStatus            string
 	}{
 		{
-			name:                    "stripe expire",
-			tradeNo:                 "stripe-expire-guard",
-			storedPaymentProvider:   PaymentProviderCreem,
-			expectedPaymentProvider: PaymentProviderStripe,
+			name:                    "expire",
+			tradeNo:                 "expire-guard",
+			storedPaymentProvider:   "gateway_b",
+			expectedPaymentProvider: "gateway_a",
 			targetStatus:            common.TopUpStatusExpired,
 		},
 		{
-			name:                    "waffo failed",
-			tradeNo:                 "waffo-failed-guard",
-			storedPaymentProvider:   PaymentProviderStripe,
-			expectedPaymentProvider: PaymentProviderWaffo,
+			name:                    "failed",
+			tradeNo:                 "failed-guard",
+			storedPaymentProvider:   "gateway_a",
+			expectedPaymentProvider: "gateway_b",
 			targetStatus:            common.TopUpStatusFailed,
 		},
 	}
@@ -145,9 +130,9 @@ func TestCompleteSubscriptionOrder_RejectsMismatchedPaymentProvider(t *testing.T
 
 	insertUserForPaymentGuardTest(t, 202, 0)
 	plan := insertSubscriptionPlanForPaymentGuardTest(t, 301)
-	insertSubscriptionOrderForPaymentGuardTest(t, "sub-guard-order", 202, plan.Id, PaymentProviderStripe)
+	insertSubscriptionOrderForPaymentGuardTest(t, "sub-guard-order", 202, plan.Id, "gateway_a")
 
-	err := CompleteSubscriptionOrder("sub-guard-order", `{"provider":"epay"}`, PaymentProviderEpay, "alipay")
+	err := CompleteSubscriptionOrder("sub-guard-order", `{"provider":"gateway_b"}`, "gateway_b", "card")
 	require.ErrorIs(t, err, ErrPaymentMethodMismatch)
 
 	order := GetSubscriptionOrderByTradeNo("sub-guard-order")
@@ -164,9 +149,9 @@ func TestExpireSubscriptionOrder_RejectsMismatchedPaymentProvider(t *testing.T) 
 
 	insertUserForPaymentGuardTest(t, 303, 0)
 	plan := insertSubscriptionPlanForPaymentGuardTest(t, 401)
-	insertSubscriptionOrderForPaymentGuardTest(t, "sub-expire-guard", 303, plan.Id, PaymentProviderStripe)
+	insertSubscriptionOrderForPaymentGuardTest(t, "sub-expire-guard", 303, plan.Id, "gateway_a")
 
-	err := ExpireSubscriptionOrder("sub-expire-guard", PaymentProviderCreem)
+	err := ExpireSubscriptionOrder("sub-expire-guard", "gateway_b")
 	require.ErrorIs(t, err, ErrPaymentMethodMismatch)
 
 	order := GetSubscriptionOrderByTradeNo("sub-expire-guard")
@@ -174,14 +159,14 @@ func TestExpireSubscriptionOrder_RejectsMismatchedPaymentProvider(t *testing.T) 
 	assert.Equal(t, common.TopUpStatusPending, order.Status)
 }
 
-func createEpayTestOrder(t *testing.T, userId int, tradeNo string, provider string, status string) TopUp {
+func createOnlineTopUpTestOrder(t *testing.T, userId int, tradeNo string, provider string, status string) TopUp {
 	t.Helper()
 	topUp := TopUp{
 		UserId:          userId,
 		Amount:          2,
 		Money:           10.0,
 		TradeNo:         tradeNo,
-		PaymentMethod:   "alipay",
+		PaymentMethod:   "bank_qr",
 		PaymentProvider: provider,
 		CreateTime:      common.GetTimestamp(),
 		Status:          status,
@@ -190,7 +175,7 @@ func createEpayTestOrder(t *testing.T, userId int, tradeNo string, provider stri
 	return topUp
 }
 
-func TestRechargeEpayCreditsQuotaExactlyOnce(t *testing.T) {
+func TestRechargeTopUpCreditsQuotaExactlyOnce(t *testing.T) {
 	truncateTables(t)
 
 	oldQuotaPerUnit := common.QuotaPerUnit
@@ -198,9 +183,9 @@ func TestRechargeEpayCreditsQuotaExactlyOnce(t *testing.T) {
 	t.Cleanup(func() { common.QuotaPerUnit = oldQuotaPerUnit })
 
 	user := insertUserForPaymentGuardTest(t, 501, 0)
-	order := createEpayTestOrder(t, user.Id, "EPAYTESTONCE", PaymentProviderEpay, common.TopUpStatusPending)
+	order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTONCE", "gateway_a", common.TopUpStatusPending)
 
-	alreadyDone, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+	alreadyDone, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 	require.NoError(t, err)
 	assert.False(t, alreadyDone)
 	assert.Equal(t, 2*500000, getUserQuotaForPaymentGuardTest(t, user.Id))
@@ -210,13 +195,13 @@ func TestRechargeEpayCreditsQuotaExactlyOnce(t *testing.T) {
 	assert.Equal(t, common.TopUpStatusSuccess, reloaded.Status)
 	assert.NotZero(t, reloaded.CompleteTime)
 
-	alreadyDone, err = RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+	alreadyDone, err = RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 	require.NoError(t, err)
 	assert.True(t, alreadyDone)
 	assert.Equal(t, 2*500000, getUserQuotaForPaymentGuardTest(t, user.Id))
 }
 
-func TestRechargeEpayKeepsRedisAndDatabaseCreditInSync(t *testing.T) {
+func TestRechargeTopUpKeepsRedisAndDatabaseCreditInSync(t *testing.T) {
 	truncateTables(t)
 	useUserCacheMiniRedis(t)
 
@@ -226,9 +211,9 @@ func TestRechargeEpayKeepsRedisAndDatabaseCreditInSync(t *testing.T) {
 
 	user := insertUserForPaymentGuardTest(t, 502, 7)
 	require.NoError(t, populateUserCache(*user))
-	order := createEpayTestOrder(t, user.Id, "EPAYTESTREDISSYNC", PaymentProviderEpay, common.TopUpStatusPending)
+	order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTREDISSYNC", "gateway_a", common.TopUpStatusPending)
 
-	alreadyDone, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+	alreadyDone, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 	require.NoError(t, err)
 	assert.False(t, alreadyDone)
 	assert.Equal(t, 17, getUserQuotaForPaymentGuardTest(t, user.Id))
@@ -236,7 +221,7 @@ func TestRechargeEpayKeepsRedisAndDatabaseCreditInSync(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 17, cached.Quota)
 
-	alreadyDone, err = RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+	alreadyDone, err = RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 	require.NoError(t, err)
 	assert.True(t, alreadyDone)
 	cached, err = cacheGetUserBase(user.Id)
@@ -244,7 +229,7 @@ func TestRechargeEpayKeepsRedisAndDatabaseCreditInSync(t *testing.T) {
 	assert.Equal(t, 17, cached.Quota)
 }
 
-func TestRechargeEpayUpdatesPaymentMethodToActual(t *testing.T) {
+func TestRechargeTopUpUpdatesPaymentMethodToActual(t *testing.T) {
 	truncateTables(t)
 
 	oldQuotaPerUnit := common.QuotaPerUnit
@@ -252,19 +237,19 @@ func TestRechargeEpayUpdatesPaymentMethodToActual(t *testing.T) {
 	t.Cleanup(func() { common.QuotaPerUnit = oldQuotaPerUnit })
 
 	user := insertUserForPaymentGuardTest(t, 503, 0)
-	order := createEpayTestOrder(t, user.Id, "EPAYTESTMETHOD", PaymentProviderEpay, common.TopUpStatusPending)
+	order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTMETHOD", "gateway_a", common.TopUpStatusPending)
 
-	alreadyDone, err := RechargeEpay(order.TradeNo, "wxpay", "127.0.0.1")
+	alreadyDone, err := RechargeTopUp(order.TradeNo, "gateway_a", "card", "127.0.0.1")
 	require.NoError(t, err)
 	assert.False(t, alreadyDone)
 
 	reloaded := GetTopUpByTradeNo(order.TradeNo)
 	require.NotNil(t, reloaded)
-	assert.Equal(t, "wxpay", reloaded.PaymentMethod)
+	assert.Equal(t, "card", reloaded.PaymentMethod)
 	assert.Equal(t, 2*500000, getUserQuotaForPaymentGuardTest(t, user.Id))
 }
 
-func TestRechargeEpayRejectsForeignAndNonPendingOrders(t *testing.T) {
+func TestRechargeTopUpRejectsForeignAndNonPendingOrders(t *testing.T) {
 	truncateTables(t)
 
 	oldQuotaPerUnit := common.QuotaPerUnit
@@ -274,26 +259,26 @@ func TestRechargeEpayRejectsForeignAndNonPendingOrders(t *testing.T) {
 	user := insertUserForPaymentGuardTest(t, 504, 7)
 
 	t.Run("order from another payment provider", func(t *testing.T) {
-		order := createEpayTestOrder(t, user.Id, "EPAYTESTSTRIPE", PaymentProviderStripe, common.TopUpStatusPending)
-		_, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+		order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTFOREIGN", "gateway_b", common.TopUpStatusPending)
+		_, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 		assert.ErrorIs(t, err, ErrPaymentMethodMismatch)
 		assert.Equal(t, 7, getUserQuotaForPaymentGuardTest(t, user.Id))
 	})
 
 	t.Run("order that is not pending", func(t *testing.T) {
-		order := createEpayTestOrder(t, user.Id, "EPAYTESTEXPIRED", PaymentProviderEpay, common.TopUpStatusExpired)
-		_, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+		order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTEXPIRED", "gateway_a", common.TopUpStatusExpired)
+		_, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 		assert.ErrorIs(t, err, ErrTopUpStatusInvalid)
 		assert.Equal(t, 7, getUserQuotaForPaymentGuardTest(t, user.Id))
 	})
 
 	t.Run("missing order", func(t *testing.T) {
-		_, err := RechargeEpay("EPAYTESTMISSING", "alipay", "127.0.0.1")
+		_, err := RechargeTopUp("TOPUPTESTMISSING", "gateway_a", "bank_qr", "127.0.0.1")
 		assert.ErrorIs(t, err, ErrTopUpNotFound)
 	})
 }
 
-func TestRechargeEpayRejectsQuotaOverflowBeforeCompletingOrder(t *testing.T) {
+func TestRechargeTopUpRejectsQuotaOverflowBeforeCompletingOrder(t *testing.T) {
 	truncateTables(t)
 
 	oldQuotaPerUnit := common.QuotaPerUnit
@@ -301,15 +286,15 @@ func TestRechargeEpayRejectsQuotaOverflowBeforeCompletingOrder(t *testing.T) {
 	t.Cleanup(func() { common.QuotaPerUnit = oldQuotaPerUnit })
 
 	user := insertUserForPaymentGuardTest(t, 505, 3)
-	order := createEpayTestOrder(t, user.Id, "EPAYTESTOVERFLOW", PaymentProviderEpay, common.TopUpStatusPending)
+	order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTOVERFLOW", "gateway_a", common.TopUpStatusPending)
 
-	_, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+	_, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 	require.Error(t, err)
 	assert.Equal(t, 3, getUserQuotaForPaymentGuardTest(t, user.Id))
 	assert.Equal(t, common.TopUpStatusPending, getTopUpStatusForPaymentGuardTest(t, order.TradeNo))
 }
 
-func TestRechargeEpayEnforcesFinalWalletQuotaLimit(t *testing.T) {
+func TestRechargeTopUpEnforcesFinalWalletQuotaLimit(t *testing.T) {
 	oldQuotaPerUnit := common.QuotaPerUnit
 	common.QuotaPerUnit = 500000
 	t.Cleanup(func() { common.QuotaPerUnit = oldQuotaPerUnit })
@@ -340,9 +325,9 @@ func TestRechargeEpayEnforcesFinalWalletQuotaLimit(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			truncateTables(t)
 			user := insertUserForPaymentGuardTest(t, 506, tc.currentQuota)
-			order := createEpayTestOrder(t, user.Id, "EPAYTESTWALLETLIMIT", PaymentProviderEpay, common.TopUpStatusPending)
+			order := createOnlineTopUpTestOrder(t, user.Id, "TOPUPTESTWALLETLIMIT", "gateway_a", common.TopUpStatusPending)
 
-			_, err := RechargeEpay(order.TradeNo, "alipay", "127.0.0.1")
+			_, err := RechargeTopUp(order.TradeNo, "gateway_a", "bank_qr", "127.0.0.1")
 			if tc.wantErr {
 				require.ErrorIs(t, err, ErrTopUpQuotaLimitExceeded)
 			} else {

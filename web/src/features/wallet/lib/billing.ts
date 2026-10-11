@@ -56,27 +56,6 @@ export function getStatusConfig(status: TopupStatus): StatusConfig {
 }
 
 /**
- * Payment method display names
- */
-export const PAYMENT_METHOD_NAMES: Record<string, string> = {
-  stripe: 'Stripe',
-  alipay: 'Alipay',
-  wxpay: 'WeChat Pay',
-  waffo: 'Waffo',
-}
-
-/**
- * Get payment method display name
- */
-export function getPaymentMethodName(
-  method: string,
-  t?: (key: string) => string
-): string {
-  const name = PAYMENT_METHOD_NAMES[method] || method
-  return t ? t(name) : name
-}
-
-/**
  * Format timestamp to readable date string
  */
 export function formatTimestamp(timestamp: number): string {
