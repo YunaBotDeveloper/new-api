@@ -49,6 +49,7 @@ type gpmPayWebhookPayload struct {
 
 func isGPMPayTopUpEnabled() bool {
 	return operation_setting.IsPaymentComplianceConfirmed() &&
+		operation_setting.Price >= setting.GPMPayMinPrice &&
 		strings.TrimSpace(setting.GPMPayWebhookSecret) != "" &&
 		strings.TrimSpace(setting.GPMPayBankBin) != "" &&
 		strings.TrimSpace(setting.GPMPayAccountNumber) != ""

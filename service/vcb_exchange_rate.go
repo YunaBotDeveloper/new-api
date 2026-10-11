@@ -25,8 +25,6 @@ const (
 	vcbExchangeRateURL = "https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx"
 	// Vietcombank allows at most one request every 5 minutes.
 	vcbExchangeRateInterval = 10 * time.Minute
-	// A VND/USD rate below this means the feed format changed; never price top-ups from it.
-	vcbMinSaneUSDRate = 1000
 )
 
 var vcbExchangeRateOnce sync.Once
@@ -110,7 +108,8 @@ func parseVCBUSDSellRate(body []byte) (float64, error) {
 		if err != nil {
 			return 0, fmt.Errorf("invalid USD sell rate %q", rate.Sell)
 		}
-		if value < vcbMinSaneUSDRate {
+		// A lower rate means the feed format changed; never price top-ups from it.
+		if value < setting.GPMPayMinPrice {
 			return 0, fmt.Errorf("implausible USD sell rate %q", rate.Sell)
 		}
 		return value, nil

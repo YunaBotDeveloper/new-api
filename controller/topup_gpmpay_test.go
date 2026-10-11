@@ -15,6 +15,7 @@ import (
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/setting"
+	"github.com/QuantumNous/new-api/setting/operation_setting"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/assert"
@@ -123,4 +124,21 @@ func TestGPMPayWebhookCreditsMatchingOrder(t *testing.T) {
 			assert.Equal(t, tc.wantQuota, user.Quota)
 		})
 	}
+}
+
+func TestGPMPayTopUpDisabledWhilePriceIsNotVND(t *testing.T) {
+	paymentSetting := operation_setting.GetPaymentSetting()
+	oldPrice, oldConfirmed, oldVersion := operation_setting.Price, paymentSetting.ComplianceConfirmed, paymentSetting.ComplianceTermsVersion
+	oldSecret, oldBin, oldAccount := setting.GPMPayWebhookSecret, setting.GPMPayBankBin, setting.GPMPayAccountNumber
+	paymentSetting.ComplianceConfirmed, paymentSetting.ComplianceTermsVersion = true, operation_setting.CurrentComplianceTermsVersion
+	setting.GPMPayWebhookSecret, setting.GPMPayBankBin, setting.GPMPayAccountNumber = "whsec", "970436", "0123456789"
+	t.Cleanup(func() {
+		operation_setting.Price, paymentSetting.ComplianceConfirmed, paymentSetting.ComplianceTermsVersion = oldPrice, oldConfirmed, oldVersion
+		setting.GPMPayWebhookSecret, setting.GPMPayBankBin, setting.GPMPayAccountNumber = oldSecret, oldBin, oldAccount
+	})
+
+	operation_setting.Price = 7.3 // legacy CNY default would sell 1 USD for 7 dong
+	assert.False(t, isGPMPayTopUpEnabled())
+	operation_setting.Price = 26070
+	assert.True(t, isGPMPayTopUpEnabled())
 }
